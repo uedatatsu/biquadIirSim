@@ -1,0 +1,172 @@
+/* 基本的なスタイルリセット */
+body, h1, h2, p, div, input, button, label {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 95%;
+    max-width: 1600px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+header h1 {
+    color: #2c3e50;
+}
+
+.main-content {
+    display: flex;
+    flex-wrap: wrap; /* レスポンシブ対応 */
+    gap: 20px;
+}
+
+.controls {
+    flex: 1; /* 幅の比率 */
+    min-width: 280px; /* 最小幅 */
+    padding: 20px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
+
+.controls h2 {
+    margin-bottom: 15px;
+    color: #34495e;
+    border-bottom: 1px solid #bdc3c7;
+    padding-bottom: 8px;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: inline-block;
+    width: 40px; /* ラベル幅調整 */
+    font-weight: bold;
+    color: #555;
+    vertical-align: middle;
+}
+
+.control-group input[type="number"] {
+    width: calc(100% - 50px); /* ラベル幅を引いた残り */
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 1em;
+    vertical-align: middle;
+}
+.control-group input[disabled] {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+}
+
+
+.controls button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+    background-color: #2980b9;
+}
+
+
+.charts-area {
+    flex: 3; /* 幅の比率 */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* レスポンシブなグリッド */
+    gap: 20px;
+    min-width: 0; /* flexアイテムの縮小問題を解決 */
+}
+
+.chart-container {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 350px; /* グラフの最小高さ */
+    display: flex;
+    flex-direction: column;
+}
+.chart-container canvas {
+    width: 100% !important; /* Chart.jsのサイズ調整 */
+    height: auto !important; /* Chart.jsのサイズ調整 */
+    flex-grow: 1; /* コンテナ内で可能な限り高さを取る */
+}
+
+
+.chart-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #34495e;
+}
+
+.chart-container-plotly { /* Plotlyのコンテナ用 */
+    position: relative; /* ローダーの位置基準 */
+}
+
+.plotly-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: none; /* 初期状態は非表示 */
+    z-index: 10;
+}
+
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 0.9em;
+    color: #7f8c8d;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    .controls, .charts-area {
+        flex: none; /* flex比率を解除 */
+        width: 100%;
+    }
+    .charts-area {
+        grid-template-columns: 1fr; /* 1カラム表示 */
+    }
+}
