@@ -152,8 +152,8 @@ header h1 {
 /* z平面グラフ専用のスタイル */
 .z-plane-container {
     /* .chart-container のスタイルを継承 */
-    min-height: 400px; /* 他のグラフコンテナのデフォルト最小高さ */
-    max-height: 400px; /* 他のグラフコンテナのデフォルト最大高さ */
+    min-height: 550px; /* 他のグラフコンテナのデフォルト最小高さ */
+    max-height: 55px; /* 他のグラフコンテナのデフォルト最大高さ */
     min-width: 400px; /* z平面グラフの最小幅 */
     max-width: 400px; /* z平面グラフの最大幅 */
 }
