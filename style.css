@@ -188,6 +188,8 @@ header h1 {
 .chart-container > canvas,
 .chart-container > div[id$="Chart"] {
     width: 100% !important;
+    height: 100%; /* 追加: 親の高さに合わせる */
+    max-height: 100%; /* 追加: chart-containerの高さを超えない */
     flex-grow: 1;
     min-height: 0;
     display: block;
