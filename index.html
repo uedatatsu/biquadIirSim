@@ -6,6 +6,7 @@
     <title>双二次IIRフィルタ シミュレータ</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 </head>
 <body>
@@ -19,27 +20,33 @@
                 <h2>フィルタ係数</h2>
                 <div class="control-group">
                     <label for="b0">b<sub>0</sub>:</label>
-                    <input type="number" id="b0" step="0.01" value="1.0">
+                    <input type="number" id="b0" step="0.00000001" value="1.0">
                 </div>
                 <div class="control-group">
                     <label for="b1">b<sub>1</sub>:</label>
-                    <input type="number" id="b1" step="0.01" value="0.0">
+                    <input type="number" id="b1" step="0.00000001" value="0.0">
                 </div>
                 <div class="control-group">
                     <label for="b2">b<sub>2</sub>:</label>
-                    <input type="number" id="b2" step="0.01" value="0.0">
+                    <input type="number" id="b2" step="0.00000001" value="0.0">
                 </div>
                 <div class="control-group">
                     <label for="a0">a<sub>0</sub>:</label>
-                    <input type="number" id="a0" step="0.01" value="1.0" disabled title="a0は通常1に正規化されます">
+                    <input type="number" id="a0" step="0.00000001" value="1.0" disabled title="a0は通常1に正規化されます">
                 </div>
                 <div class="control-group">
                     <label for="a1">a<sub>1</sub>:</label>
-                    <input type="number" id="a1" step="0.01" value="0.0">
+                    <input type="number" id="a1" step="0.00000001" value="0.0">
                 </div>
                 <div class="control-group">
                     <label for="a2">a<sub>2</sub>:</label>
-                    <input type="number" id="a2" step="0.01" value="0.0">
+                    <input type="number" id="a2" step="0.00000001" value="0.0">
+                </div>
+
+                <h2>設定</h2>
+                <div class="control-group">
+                    <label for="samplingFrequency" class="long-label">Fs (Hz):</label>
+                    <input type="number" id="samplingFrequency" step="1000" value="48000">
                 </div>
                 <button id="resetCoeffs">係数リセット</button>
             </aside>
@@ -49,9 +56,14 @@
                     <h2>周波数特性</h2>
                     <canvas id="freqResponseChart"></canvas>
                 </div>
-                <div class="chart-container">
-                    <h2>z平面 (極・零点)</h2>
-                    <canvas id="zPlaneChart"></canvas>
+                <div class="chart-container z-plane-container"> <h2>z平面 (極・零点)</h2>
+                    <div class="z-plane-graph-wrapper"> <canvas id="zPlaneChart"></canvas>
+                    </div>
+                    <div id="stabilityStatus" class="stability-status">安定性: 計算中...</div>
+                    <div id="poleZeroValues" class="pole-zero-values">
+                        <p><strong>極:</strong> <span id="poleValuesText">-</span></p>
+                        <p><strong>零点:</strong> <span id="zeroValuesText">-</span></p>
+                    </div>
                 </div>
                 <div class="chart-container">
                     <h2>インパルス応答</h2>
@@ -62,6 +74,57 @@
                     <div id="zPlane3DChart"></div>
                      <div class="plotly-loader" id="plotlyLoader">
                         3Dグラフ生成中...
+                    </div>
+                </div>
+
+                <div class="chart-container audio-test-section">
+                    <h2>音声テスト信号</h2>
+                    <div class="audio-controls">
+                        <div class="control-group">
+                            <label for="signalType" class="short-label">信号:</label>
+                            <select id="signalType">
+                                <option value="sine_125">サイン波 125Hz</option>
+                                <option value="sine_250">サイン波 250Hz</option>
+                                <option value="sine_500">サイン波 500Hz</option>
+                                <option value="sine_1000" selected>サイン波 1kHz</option>
+                                <option value="sine_2000">サイン波 2kHz</option>
+                                <option value="sine_4000">サイン波 4kHz</option>
+                                <option value="sine_8000">サイン波 8kHz</option>
+                                <option value="sine_16000">サイン波 16kHz</option>
+                                <option value="whitenoise">ホワイトノイズ</option>
+                            </select>
+                        </div>
+                         <div class="control-group"> <label for="signalAmplitude" class="short-label">振幅:</label>
+                            <input type="number" id="signalAmplitude" step="0.1" value="1.0" min="0" max="1.0">
+                        </div>
+                        <button id="playButton">再生</button>
+                        <button id="stopButton">停止</button>
+                        <div class="control-group volume-control">
+                            <label for="volumeSlider" class="short-label">音量:</label>
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+                        </div>
+                    </div>
+                    <div class="audio-related-charts">
+                        <div class="audio-column">
+                            <div class="waveform-chart-container">
+                                <h3>入力波形</h3>
+                                <canvas id="inputWaveformChart"></canvas>
+                            </div>
+                            <div class="waveform-chart-container">
+                                <h3>入力信号 周波数特性 (FFT)</h3>
+                                <canvas id="inputFftChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="audio-column">
+                            <div class="waveform-chart-container">
+                                <h3>出力波形</h3>
+                                <canvas id="outputWaveformChart"></canvas>
+                            </div>
+                            <div class="waveform-chart-container">
+                                <h3>出力信号 周波数特性 (FFT)</h3>
+                                <canvas id="outputFftChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>

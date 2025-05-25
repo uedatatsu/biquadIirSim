@@ -1,15 +1,19 @@
-/* 基本的なスタイルリセット */
-body, h1, h2, p, div, input, button, label {
+/* style.css */
+html, body {
+    height: 100%; /* ビューポートの高さを基準にする */
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box; /* html, body にも適用 */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden; /* 水平スクロールバーを隠す */
 }
 
 body {
     background-color: #f4f7f6;
     color: #333;
     line-height: 1.6;
+    display: flex; /* bodyをflexコンテナにして、.containerが100%高さを占めるようにする */
+    flex-direction: column;
 }
 
 .container {
@@ -20,6 +24,10 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* body の中で利用可能な高さを埋める */
+    overflow: hidden; /* .container 内でスクロールが発生しないように（デスクトップ） */
 }
 
 header {
@@ -27,6 +35,7 @@ header {
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
+    flex-shrink: 0; /* ヘッダーが縮まないように */
 }
 
 header h1 {
@@ -37,15 +46,20 @@ header h1 {
     display: flex;
     flex-wrap: wrap; /* レスポンシブ対応 */
     gap: 20px;
+    flex-grow: 1; /* .container の中で利用可能な高さを埋める */
+    overflow: hidden; /* .main-content 内部でスクロールを制御するため */
+    min-height: 0; /* .main-content が縮小できるようにする (重要) */
 }
 
 .controls {
-    flex: 1; /* 幅の比率 */
-    min-width: 280px; /* 最小幅 */
+    flex: 1;
+    min-width: 280px;
     padding: 20px;
     background-color: #ecf0f1;
     border-radius: 8px;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    overflow-y: auto; /* コントロールが多い場合にスクロール */
+    max-height: 100%; /* 親の高さに制限 */
 }
 
 .controls h2 {
@@ -57,24 +71,35 @@ header h1 {
 
 .control-group {
     margin-bottom: 15px;
+    display: flex; /* ラベルと入力要素を横並びにするため */
+    align-items: center; /* 垂直方向中央揃え */
 }
 
 .control-group label {
     display: inline-block;
-    width: 40px; /* ラベル幅調整 */
     font-weight: bold;
     color: #555;
-    vertical-align: middle;
+    margin-right: 10px; /* ラベルと入力要素の間隔 */
+    flex-shrink: 0; /* ラベルが縮まないように */
+}
+.control-group label.long-label {
+    width: 70px;
+}
+.control-group label.short-label {
+    width: auto; /* 自動幅 */
 }
 
-.control-group input[type="number"] {
-    width: calc(100% - 50px); /* ラベル幅を引いた残り */
+
+.control-group input[type="number"],
+.control-group select {
     padding: 8px;
     border: 1px solid #bdc3c7;
     border-radius: 4px;
     font-size: 1em;
-    vertical-align: middle;
+    flex-grow: 1; /* 利用可能なスペースを埋める */
+    min-width: 0; /* flexアイテムが縮小できるように */
 }
+
 .control-group input[disabled] {
     background-color: #e0e0e0;
     cursor: not-allowed;
@@ -92,6 +117,7 @@ header h1 {
     cursor: pointer;
     font-size: 1em;
     transition: background-color 0.3s ease;
+    margin-top: 20px; /* 他のコントロールとの間隔 */
 }
 
 .controls button:hover {
@@ -100,11 +126,14 @@ header h1 {
 
 
 .charts-area {
-    flex: 3; /* 幅の比率 */
+    flex: 3;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* レスポンシブなグリッド */
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 20px;
-    min-width: 0; /* flexアイテムの縮小問題を解決 */
+    min-width: 0;
+    overflow-y: auto;
+    max-height: 100%;
+    padding: 5px;
 }
 
 .chart-container {
@@ -112,27 +141,83 @@ header h1 {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    min-height: 350px; /* グラフの最小高さ */
+    min-height: 350px; /* 他のグラフコンテナのデフォルト最小高さ */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
 }
-.chart-container canvas {
-    width: 100% !important; /* Chart.jsのサイズ調整 */
-    height: auto !important; /* Chart.jsのサイズ調整 */
-    flex-grow: 1; /* コンテナ内で可能な限り高さを取る */
+
+/* z平面グラフ専用のスタイル */
+.z-plane-container {
+    /* .chart-container のスタイルを継承 */
+    min-height: 550px; /* 他のグラフコンテナのデフォルト最小高さ */
+}
+
+.z-plane-graph-wrapper {
+    flex-grow: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 0; 
+    position: relative; 
+    overflow: hidden; 
+}
+
+.z-plane-graph-wrapper canvas {
+    max-width: 100%;  
+    max-height: 100%; 
+    object-fit: contain; /* アスペクト比を保ちつつフィット */
 }
 
 
-.chart-container h2 {
+.chart-container h2, .audio-test-section h3 {
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.2em;
     color: #34495e;
+    flex-shrink: 0;
+}
+.audio-test-section h3 {
+    font-size: 1em;
+    margin-top: 10px;
 }
 
-.chart-container-plotly { /* Plotlyのコンテナ用 */
-    position: relative; /* ローダーの位置基準 */
+
+.chart-container > canvas,
+.chart-container > div[id$="Chart"] {
+    width: 100% !important;
+    flex-grow: 1;
+    min-height: 0;
+    display: block;
+    position: relative;
 }
+
+.stability-status {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 8px;
+    padding: 5px;
+    border-radius: 4px;
+}
+.stability-status.stable {
+    background-color: #d4edda;
+    color: #155724;
+}
+.stability-status.unstable {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.pole-zero-values {
+    font-size: 0.85em;
+    margin-top: 5px;
+    padding-left: 10px;
+    color: #555;
+}
+.pole-zero-values p {
+    margin-bottom: 3px;
+}
+
 
 .plotly-loader {
     position: absolute;
@@ -143,8 +228,83 @@ header h1 {
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    display: none; /* 初期状態は非表示 */
+    display: none;
     z-index: 10;
+}
+
+/* 音声テストセクションのスタイル */
+.audio-test-section {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    min-height: 700px; /* 音声テストセクション全体の最小高さを確保 */
+    overflow: hidden; /* このセクション内でのスクロールは .audio-related-charts で制御 */
+}
+.audio-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+}
+.audio-controls .control-group {
+    margin-bottom: 0;
+}
+.audio-controls button {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    margin-top: 0;
+    width: auto;
+    flex-shrink: 0;
+}
+.volume-control {
+    min-width: 180px;
+}
+.volume-control input[type="range"] {
+    width: 100%;
+    margin-left: 5px;
+}
+
+.audio-related-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex-grow: 1; /* 親(.audio-test-section)の残りのスペースを埋める */
+    min-height: 0; /* このグリッドコンテナが縮小できるように */
+    overflow-y: auto; /* コンテンツが多い場合にこのエリアでスクロール */
+    padding-bottom: 10px; /* スクロール時のための下部パディング */
+}
+
+.audio-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0;
+    min-height: 0;
+}
+
+.waveform-chart-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 250px;
+    background-color: #fdfdfd;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+/* .waveform-chart-container.audio-column-full は削除 */
+
+.waveform-chart-container canvas {
+    flex-grow: 1;
+    min-height: 0;
+    display: block;
+    width: 100%;
 }
 
 
@@ -155,18 +315,57 @@ footer {
     border-top: 1px solid #eee;
     font-size: 0.9em;
     color: #7f8c8d;
+    flex-shrink: 0;
 }
 
 /* レスポンシブ対応 */
+@media (max-width: 992px) {
+    .audio-related-charts {
+        grid-template-columns: 1fr;
+    }
+    /* .waveform-chart-container.audio-column-full は削除されたので関連スタイルも不要 */
+}
+
 @media (max-width: 768px) {
+    .container {
+      overflow-y: auto;
+      margin: 0 auto;
+      width: 100%;
+      border-radius: 0;
+      padding: 10px;
+    }
     .main-content {
         flex-direction: column;
+        overflow: visible;
     }
     .controls, .charts-area {
-        flex: none; /* flex比率を解除 */
+        flex: none;
         width: 100%;
+        max-height: none;
+        overflow-y: visible;
     }
     .charts-area {
-        grid-template-columns: 1fr; /* 1カラム表示 */
+        grid-template-columns: 1fr;
+    }
+     .control-group label.long-label {
+        width: 60px;
+    }
+    .audio-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .audio-related-charts {
+        grid-template-columns: 1fr;
+        overflow-y: visible;
+    }
+     .audio-column {
+        gap: 10px;
+    }
+    .audio-test-section {
+        min-height: auto;
+        overflow: visible;
+    }
+    .waveform-chart-container {
+         min-height: 220px;
     }
 }
