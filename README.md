@@ -1,3 +1,3 @@
 # biquadIirSim
 
-https://github.com/uedatatsu/biquadIirSim
+https://uedatatsu.github.io/biquadIirSim/

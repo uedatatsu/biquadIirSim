@@ -17,6 +17,15 @@
 
         <div class="main-content">
             <aside class="controls">
+                <h2>IIRフィルタの構造</h2>
+                <figure>
+                    <img src="images/iir_direct_form_1.png" alt="IIRフィルタ 直接型I ブロック図" style="max-width: 100%; height: auto;">
+                    <figcaption>双二次IIRフィルタ(直接型I)</figcaption>
+                </figure>
+                <p>
+                    出力 y[n] は以下の式で表されます:<br>
+                    y[n] = a₁y[n-1] + a₂y[n-2] + b₀x[n] + b₁x[n-1] + b₂x[n-2]
+                </p>
                 <h2>フィルタ係数</h2>
                 <div class="control-group">
                     <label for="b0">b<sub>0</sub>:</label>

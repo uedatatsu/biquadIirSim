@@ -105,8 +105,8 @@ function getCoefficients() {
     const b1 = parseFloat(document.getElementById('b1').value) || 0;
     const b2 = parseFloat(document.getElementById('b2').value) || 0;
     const a0 = 1.0;
-    const a1 = parseFloat(document.getElementById('a1').value) || 0;
-    const a2 = parseFloat(document.getElementById('a2').value) || 0;
+    const a1 = -parseFloat(document.getElementById('a1').value) || 0;
+    const a2 = -parseFloat(document.getElementById('a2').value) || 0;
     return { b0, b1, b2, a0, a1, a2 };
 }
 
