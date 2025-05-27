@@ -357,8 +357,31 @@ footer {
     }
     .charts-area {
         grid-template-columns: 1fr;
+        min-width: 0;
+        padding: 0;
     }
-     .control-group label.long-label {
+    .chart-container {
+        min-width: 0;
+        min-height: 220px;
+        max-height: none;
+        padding: 8px;
+    }
+    .chart-container > canvas,
+    .chart-container > div[id$="Chart"] {
+        min-height: 180px;
+        max-height: none;
+        height: 220px;
+    }
+    .z-plane-container {
+        min-width: 0;
+        max-width: 100%;
+        min-height: 220px;
+        max-height: none;
+    }
+    .z-plane-graph-wrapper {
+        min-height: 0;
+    }
+    .control-group label.long-label {
         width: 60px;
     }
     .audio-controls {
@@ -369,7 +392,7 @@ footer {
         grid-template-columns: 1fr;
         overflow-y: visible;
     }
-     .audio-column {
+    .audio-column {
         gap: 10px;
     }
     .audio-test-section {
@@ -377,6 +400,7 @@ footer {
         overflow: visible;
     }
     .waveform-chart-container {
-         min-height: 220px;
+         min-height: 120px;
+         max-height: none;
     }
 }
