@@ -1,19 +1,24 @@
 /* style.css */
 html, body {
-    height: 100%; /* ビューポートの高さを基準にする */
+    height: 100%;
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* html, body にも適用 */
+    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-x: hidden; /* 水平スクロールバーを隠す */
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 body {
     background-color: #f4f7f6;
     color: #333;
     line-height: 1.6;
-    display: flex; /* bodyをflexコンテナにして、.containerが100%高さを占めるようにする */
+    flex: 1 0 auto;
+    display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 .container {
@@ -26,8 +31,10 @@ body {
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* body の中で利用可能な高さを埋める */
-    overflow: hidden; /* .container 内でスクロールが発生しないように（デスクトップ） */
+    flex-grow: 1;
+    min-height: 100vh;
+    flex: 1 0 auto;
+    overflow: visible;
 }
 
 header {
@@ -326,7 +333,7 @@ footer {
     border-top: 1px solid #eee;
     font-size: 0.9em;
     color: #7f8c8d;
-    flex-shrink: 0;
+    flex-shrink: 0; /* フッターが縮まないように明示 */
 }
 
 /* レスポンシブ対応 */
@@ -338,69 +345,40 @@ footer {
 }
 
 @media (max-width: 768px) {
-    .container {
-      overflow-y: auto;
-      margin: 0 auto;
-      width: 100%;
-      border-radius: 0;
-      padding: 10px;
-    }
-    .main-content {
-        flex-direction: column;
-        overflow: visible;
-    }
-    .controls, .charts-area {
-        flex: none;
-        width: 100%;
-        max-height: none;
-        overflow-y: visible;
-    }
-    .charts-area {
-        grid-template-columns: 1fr;
-        min-width: 0;
-        padding: 0;
-    }
-    .chart-container {
-        min-width: 0;
-        min-height: 220px;
-        max-height: none;
-        padding: 8px;
-    }
-    .chart-container > canvas,
-    .chart-container > div[id$="Chart"] {
-        min-height: 180px;
-        max-height: none;
-        height: 220px;
-    }
-    .z-plane-container {
-        min-width: 0;
-        max-width: 100%;
-        min-height: 220px;
-        max-height: none;
-    }
-    .z-plane-graph-wrapper {
-        min-height: 0;
-    }
-    .control-group label.long-label {
-        width: 60px;
-    }
-    .audio-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .audio-related-charts {
-        grid-template-columns: 1fr;
-        overflow-y: visible;
-    }
-    .audio-column {
-        gap: 10px;
-    }
-    .audio-test-section {
-        min-height: auto;
-        overflow: visible;
-    }
-    .waveform-chart-container {
-         min-height: 120px;
-         max-height: none;
-    }
+  html, body {
+    min-height: 100vh !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  body {
+    flex: 1 0 auto !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .container {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    flex: 1 0 auto !important;
+  }
+  .main-content {
+    flex-grow: 1 !important;
+    flex-shrink: 1 !important;
+    flex-basis: auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  footer {
+    flex-shrink: 0 !important;
+    margin-top: 30px !important;
+    position: relative !important;
+    bottom: 0 !important;
+    width: 100% !important;
+  }
 }
