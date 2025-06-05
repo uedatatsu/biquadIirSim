@@ -20,10 +20,14 @@ const initialSamplingFrequency = 48000;
 const initialSignalAmplitude = 1.0;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 振幅入力も 'input' イベントでリッスンするIDリストに追加
+    // URLのパラメータを取得
+    setValuesFromUrlOrDefaults();
+
+    // 'input' イベントでリッスンするIDリスト
     const coeffIds = ['b0', 'b1', 'b2', 'a1', 'a2', 'samplingFrequency', 'signalAmplitude'];
     coeffIds.forEach(id => {
         const element = document.getElementById(id);
+        console.log("element:", element.value);
         if (element) {
             let debounceTimer;
             element.addEventListener('input', () => {
@@ -38,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('resetCoeffs');
     if (resetButton) {
         resetButton.addEventListener('click', () => {
-            setInitialCoefficientsAndFs();
+            resetToInitialValues();
             updateAllPlots();
         });
     }
@@ -56,10 +60,47 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAllPlots();
     });
 
-    setInitialCoefficientsAndFs();
     initAudio();
     updateAllPlots();
 });
+
+function setValuesFromUrlOrDefaults() {
+    const params = new URLSearchParams(window.location.search);
+
+    const config = [
+        { id: 'b0', defaultValue: initialCoefficients.b0, isNumeric: true },
+        { id: 'b1', defaultValue: initialCoefficients.b1, isNumeric: true },
+        { id: 'b2', defaultValue: initialCoefficients.b2, isNumeric: true },
+        { id: 'a1', defaultValue: initialCoefficients.a1, isNumeric: true },
+        { id: 'a2', defaultValue: initialCoefficients.a2, isNumeric: true },
+        { id: 'samplingFrequency', defaultValue: initialSamplingFrequency, isNumeric: true },
+        { id: 'signalAmplitude', defaultValue: initialSignalAmplitude, isNumeric: true }
+        // a0 は disabled で固定値なので、ここでは扱わない
+    ];
+
+    config.forEach(item => {
+        const inputElement = document.getElementById(item.id);
+        if (inputElement) {
+            let valueToSet = item.defaultValue; // まずデフォルト値を候補とする
+
+            if (params.has(item.id)) { // URLパラメータに該当IDが存在する場合
+                const paramValueStr = params.get(item.id);
+                
+                if (item.isNumeric) {
+                    const numValue = parseFloat(paramValueStr);
+                    if (!isNaN(numValue)) {
+                        valueToSet = numValue; // 数値として妥当ならURLの値を採用
+                    } else {
+                        console.warn(`URL parameter for "${item.id}" ("${paramValueStr}") is not a valid number. Using default: ${item.defaultValue}.`);
+                    }
+                } else {
+                    valueToSet = paramValueStr; // 数値でない場合はそのまま採用（将来的な拡張用）
+                }
+            }
+            inputElement.value = valueToSet;
+        }
+    });
+}
 
 function initAudio() {
     try {
@@ -90,7 +131,7 @@ function initAudio() {
     }
 }
 
-function setInitialCoefficientsAndFs() {
+function resetToInitialValues() {
     document.getElementById('b0').value = initialCoefficients.b0;
     document.getElementById('b1').value = initialCoefficients.b1;
     document.getElementById('b2').value = initialCoefficients.b2;
